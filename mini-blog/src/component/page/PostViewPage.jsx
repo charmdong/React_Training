@@ -73,7 +73,7 @@ function PostViewPage(props) {
                     <TitleText>{post.title}</TitleText>
                     <ContentText>{post.content}</ContentText>
                 </PostContainer>
-
+                {/* 댓글 목록 */}
                 <CommentLabel>댓글</CommentLabel>
                 <CommentList comments={post.comments}/>
 

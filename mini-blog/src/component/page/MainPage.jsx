@@ -40,7 +40,7 @@ function MainPage(props) {
                         navigate("/post-write");
                     }}
                 />
-
+                {/* 게시글 목록 */}
                 <PostList
                     posts={data}
                     onClickItem={(item) => {

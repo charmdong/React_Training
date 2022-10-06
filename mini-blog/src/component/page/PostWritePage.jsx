@@ -34,6 +34,7 @@ function PostWritePage(props) {
     return (
         <Wrapper>
             <Container>
+                {/* 게시글 제목 */}
                 <TextInput 
                     height={20}
                     value={title}
@@ -42,6 +43,7 @@ function PostWritePage(props) {
                     }}
                 />
 
+                {/* 게시글 내용 */}
                 <TextInput 
                     height={400}
                     value={content}
