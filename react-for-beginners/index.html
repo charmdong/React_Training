@@ -1,31 +1,84 @@
 <!DOCTYPE html>
 <html>
-    <body>
-        <div id="root"></div>
-    </body>
-    <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script type="text/babel">
-        const root = document.getElementById("root");
-        let counter = 0;
-        
-        function countUp() {
-            counter += 1;
-            render();
+  <body>
+    <div id="root"></div>
+  </body>
+  <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const root = document.getElementById("root");
+    function Minutes2Hours() {
+
+        const [amount, setAmount] = React.useState(0);
+        const [flipped, setFlipped] = React.useState(false);
+
+        const onChange = (event) => {
+            setAmount(event.target.value);
+        };
+        const reset = () => setAmount(0);
+        const min2hour = (min) => min / 60;
+        const hour2min = (hour) => hour * 60;
+        const onFlip = () => {
+            setFlipped(current => !current);
+            setAmount(flipped ? hour2min(amount) : min2hour(amount));
         }
 
-        function render() {
-            ReactDOM.render(<Container />, root);
-        }
-
-        const Container = () => (
+        return (
             <div>
-                <h3>Total Clicks: {counter}</h3>
-                <button onClick={countUp}>Click me</button>
+                <div>
+                    <label htmlFor="minutes">Minutes</label>
+                    <input 
+                        value={flipped ? amount * 60 : amount} 
+                        id="minutes" 
+                        placeholder="Minutes" 
+                        type="number" 
+                        onChange={onChange}
+                        disabled={flipped === true}
+                    />
+                </div>    
+                <div>
+                    <label htmlFor="hours">Hours</label>
+                    <input 
+                        value={flipped ? amount : amount / 60}
+                        id="hours" 
+                        placeholder="Hours" 
+                        type="number"
+                        onChange={onChange}
+                        disabled={flipped === false}
+                    />
+                </div>
+                <button onClick={reset}>Reset</button>
+                <button onClick={onFlip}>{flipped ? "Turn back" : "Invert"}</button>
             </div>
         );
+    }
 
-        render();
-    </script>
+    function Km2Miles() {
+      return <h3>KM 2 Miles</h3>;
+    }
+
+    function App() {
+      const [index, setIndex] = React.useState("0");
+
+      const onSelect = (event) => {
+        setIndex(event.target.value);
+      }
+
+      return (
+        <div>
+          <h1>Super Converter</h1>
+          <select value={index} onChange={onSelect}>
+            <option value="0">Minutes & Hours</option>
+            <option value="1">Km & Miles</option>
+          </select>
+          <hr/>
+          {index === "0" && <Minutes2Hours />}
+          {index === "1" && <Km2Miles />}
+        </div>
+      );
+    }
+    
+    ReactDOM.render(<App />, root);
+  </script>
 </html>
