@@ -13,7 +13,7 @@ function Todo(props) {
 				text={todo.isDone ? "완료됨" : "완료하기"}
 				onClick={todo.isDone ? null : onClickBtn}
 				bgColor={todo.isDone ? "green" : "red"}
-			></Button>
+			/>
 		</div>
 	);
 }
