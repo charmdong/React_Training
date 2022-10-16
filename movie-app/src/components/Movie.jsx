@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 
 function Movie(props) {
 
@@ -8,7 +8,9 @@ function Movie(props) {
 	return (
 		<div>
 			<img src={movie.medium_cover_image} alt={movie.tile}/>
-			<h2>{movie.title_long}</h2>
+			<h2>
+				<Link to={`/movie/${movie.id}`}>{movie.title_long}</Link>
+			</h2>
 			<span>Rate: {movie.rating}, Runtime: {movie.runtime}Mins</span>
 			<p>{movie.summary}</p>
 			<ul>
