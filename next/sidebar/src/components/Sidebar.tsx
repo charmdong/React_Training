@@ -39,7 +39,7 @@ const menuItems: MenuDTO[] = [
 ];
 
 export default function SideMenubar() {
-  const { collapsed, collapseSidebar } = useProSidebar();
+  const { collapsed, collapseSidebar, toggleSidebar } = useProSidebar();
   const [menuList, setMenuList] = useState<MenuDTO[]>([]);
   const [active, setActive] = useState<string>("");
   const [openSubMenu, setOpenSubMenu] = useState<string[]>([]);
@@ -54,18 +54,53 @@ export default function SideMenubar() {
         collapseSidebar(false);
       }
     }
-
+    // TODO: 접속한 화면의 크기가 애초에 작은 경우에는 시작부터 collapse되어야 함
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [collapseSidebar]);
 
-  const handleOnclick = (event: any) => {
-    const { key } = event.target; // 클릭한 MenuItem 엘리먼트의 key 값을 가져옵니다.
+  const handleOnclick = (
+    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>
+  ) => {
+    const { key } = event.target as HTMLButtonElement & { key: string };
     setActive(key);
 
-    // Sidebar가 축소된 상태에서만 해당 SubMenu를 열어둡니다.
-    if (collapsed && openSubMenu.indexOf(key.split("-")[0]) === -1) {
-      setOpenSubMenu([...openSubMenu, key.split("-")[0]]);
+    if (collapsed) {
+      // Sidebar가 축소된 상태에서 MenuItem을 클릭한 경우
+      if (
+        event.currentTarget.parentElement?.className === "pro-inner-list-item"
+      ) {
+        setOpenSubMenu([]);
+      }
+      toggleSidebar();
+    } else {
+      // Sidebar가 확장된 상태에서 MenuItem을 클릭한 경우
+      if (
+        event.currentTarget.parentElement?.className !== "pro-inner-list-item"
+      ) {
+        setOpenSubMenu([]);
+      }
+    }
+
+    const parentNode = event.currentTarget.parentElement;
+    if (parentNode && parentNode.className === "pro-inner-list-item") {
+      const parentKey = parentNode.getAttribute("data-parentkey") as string;
+      const subMenuIndex = openSubMenu.indexOf(parentKey);
+      if (subMenuIndex !== -1) {
+        setOpenSubMenu([
+          ...openSubMenu.slice(0, subMenuIndex),
+          ...openSubMenu.slice(subMenuIndex + 1),
+        ]);
+      } else {
+        setOpenSubMenu([...openSubMenu, parentKey]);
+      }
+    }
+  };
+
+  const handleSubmenuClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const { className } = event.target as HTMLDivElement;
+    if (className !== "pro-inner-list-item") {
+      setOpenSubMenu([]);
     }
   };
 
@@ -73,15 +108,16 @@ export default function SideMenubar() {
     <>
       <Sidebar>
         <Menu>
-          {menuList.map((menu, index) =>
+          {menuList.map((menu, index: number) =>
             menu.children ? (
               <SubMenu
                 key={index}
                 label={menu.name}
                 icon={<AiFillHome />}
-                defaultOpen={openSubMenu.indexOf(`${index}`) !== -1}
+                data-parentkey={`${index}`}
+                open={openSubMenu.indexOf(`${index}`) !== -1}
               >
-                {menu.children.map((sub, subIndex) => (
+                {menu.children.map((sub, subIndex: number) => (
                   <MenuItem
                     key={`${index}-${subIndex}`}
                     component={<Link href={sub.url || ""} />}
